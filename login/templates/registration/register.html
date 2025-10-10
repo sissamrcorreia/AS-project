@@ -4,7 +4,7 @@
 
 {% load crispy_forms_tags %}
 
-<h3>Login Page</h3>
+<h3>Register Page</h3>
 
 <br>
 
@@ -16,9 +16,9 @@
             <h5 class="card-title">Enter credentials</h5>
             {{ form|crispy }}
             <a href="{% url 'home' %}" class="card-link">Home</a>
-            <a href="{% url 'register' %}" class="card-link">Register</a>
+            <a href="{% url 'login' %}" class="card-link">Login</a>
 
-            <button class="btn btn-sm btn-primary float-end" type="submit">Login</button>
+            <button class="btn btn-sm btn-primary float-end" type="submit">Register</button>
         </div>
     </div>
 
