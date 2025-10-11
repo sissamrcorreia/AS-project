@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <style>
+        .hero-section {
+            background: linear-gradient(rgba(45, 74, 62, 0.7), rgba(45, 74, 62, 0.7)), url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+            background-size: cover;
+            background-position: center;
+            color: #2d4a3e;
+            padding: 6rem 0;
+            text-align: center;
+            border-radius: 15px;
+            margin: 2rem 0;
+        }
+        .hero-section h2 {
+            font-size: 3rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        .hero-section p {
+            font-size: 1.3rem;
+            max-width: 600px;
+            margin: 0 auto 2rem;
+        }
+        .features-section {
+            padding: 3rem 0;
+        }
+        .feature-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 4px 12px rgba(0, 100, 0, 0.1);
+            text-align: center;
+            margin-bottom: 2rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .feature-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 6px 16px rgba(0, 100, 0, 0.2);
+        }
+        .feature-card img {
+            width: 100%;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 10px;
+            margin-bottom: 1.5rem;
+        }
+        .feature-card h3 {
+            color: #2d4a3e;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .cta-section {
+            background: #e0f2e9;
+            padding: 3rem 0;
+            text-align: center;
+            border-radius: 15px;
+            margin: 2rem 0;
+        }
+        .cta-section h2 {
+            font-size: 2.2rem;
+            margin-bottom: 1.5rem;
+        }
+        .cta-section p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 2rem;
+        }
+    </style>
+
+    {% if request.user.is_authenticated %}
+        <h2>{{user.username | upper}} is logged in!</h2>
+    {% endif %}
+
+    <!-- Hero Section -->
+    <section class="hero-section">
+        <div class="container">
+            <h2>Fight Food Waste, Save Delicious Meals</h2>
+            <p>Join the movement to rescue surplus food from local restaurants and bakeries at unbeatable prices.</p>
+            <a href="{% url 'products' %}" class="btn btn-primary btn-lg">Discover Surplus Deals</a>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <h1>Why Choose AS Project?</h1>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <img src="https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Surprise Food Bag">
+                        <h3>Grab Surprise Bags</h3>
+                        <p>Enjoy curated mystery bags filled with delicious surplus food at up to 70% off. Every bag is a tasty adventure!</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <img src="https://custom-images.strikinglycdn.com/res/hrscywv4p/image/upload/c_limit,fl_lossy,h_9000,w_1200,f_auto,q_auto/9653016/284418_578855.png" alt="Local Restaurants">
+                        <h3>Support Local</h3>
+                        <p>Partner with nearby eateries to save their unsold meals, helping small businesses thrive.</p>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="feature-card">
+                        <img src="https://images.pexels.com/photos/3186654/pexels-photo-3186654.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1" alt="Eco-Friendly">
+                        <h3>Save the Planet</h3>
+                        <p>Every bag you rescue reduces food waste and cuts CO2 emissions, making a real impact.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="cta-section">
+        <div class="container">
+            <h2>Join the Food Rescue Revolution</h2>
+            <p>Sign up today to start saving delicious meals, supporting local businesses, and making a difference for the planet.</p>
+            <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Get Started</a>
+        </div>
+    </section>
+{% endblock %}

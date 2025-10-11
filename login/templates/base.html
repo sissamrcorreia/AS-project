@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AS Project - {% block title %}Home{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f0f7f4;
+            color: #2d4a3e;
+            font-family: 'Arial', sans-serif;
+        }
+        .navbar {
+            background-color: #2d4a3e !important;
+        }
+        .navbar-brand, .nav-link {
+            color: #e0f2e9 !important;
+            transition: color 0.3s ease;
+        }
+        .nav-link:hover {
+            color: #a3c9a8 !important;
+        }
+        .navbar-toggler {
+            border-color: #e0f2e9;
+        }
+        .navbar-toggler-icon {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath stroke='%23e0f2e9' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+        }
+        h1, h2 {
+            color: #2d4a3e;
+            font-weight: bold;
+            text-align: center;
+            margin: 2rem 0;
+        }
+        h3 {
+            color: #2d4a3e;
+            font-weight: bold;
+            text-align: left;
+            margin: 2rem 0;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 15px;
+            padding: 2.5rem;
+            box-shadow: 0 4px 12px rgba(0, 100, 0, 0.1);
+            margin: 2rem auto;
+        }
+        .btn-primary {
+            background-color: #4a7043;
+            border-color: #4a7043;
+            font-size: 1.2rem;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+        }
+        .btn-primary:hover {
+            background-color: #3b5a35;
+            border-color: #3b5a35;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar navbar-expand-lg">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{% url 'home' %}">AS Project</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav">
+                        <li class="nav-item">
+                            <a class="nav-link active" aria-current="page" href="{% url 'home' %}">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'features' %}">Features</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'products' %}">Products</a>
+                        </li>
+                        {% if request.user.is_authenticated %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'exit' %}">Logout</a>
+                            </li>
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'login' %}">Login</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" href="{% url 'register' %}">Register</a>
+                            </li>
+                        {% endif %}
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        {% block content %}
+        {% endblock %}
+
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
