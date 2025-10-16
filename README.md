@@ -1,12 +1,12 @@
-# AS Project
+# 🥗 GoodBite (AS Project)
 
 A web application built with **Django** and **PostgreSQL**, managed via **Docker Compose**.
 
 ---
 
-## Getting Started
+## 🚀 Getting Started
 
-### 1. Build and start the containers
+### 1️⃣ Build and start the containers
 ```bash
 docker compose up --build
 ```
@@ -14,21 +14,21 @@ docker compose up --build
 
 ---
 
-## Django Setup
+## ⚙️ Django Setup
 
-### 2. Apply database migrations
+### 2️⃣ Apply database migrations
 ```bash
 docker compose run --rm web python manage.py migrate
 ```
 > Runs Django migrations to create the required database schema.
 
-### 3. Create a new Django app (example: `agenda`)
+### 3️⃣ Create a new Django app (example: `agenda`)
 ```bash
 docker compose run --rm web python manage.py startapp agenda
 ```
 > Creates a new Django app named `agenda` inside the `web` container.
 
-### 4. Create a Django superuser
+### 4️⃣ Create a Django superuser
 ```bash
 docker compose run --rm web python manage.py createsuperuser
 ```
@@ -36,15 +36,37 @@ docker compose run --rm web python manage.py createsuperuser
 
 ---
 
-## PostgreSQL Access
+## 🌱 Database Seed (initial demo data)
 
-### 5. Connect to the PostgreSQL database
+To load basic demo data (default users, etc.), run:
+
+#### ▶️ Using Docker
+```bash
+docker compose exec web python manage.py seed
+```
+
+This command will create the base demo users:
+
+| Role   | Username      | Password   |
+|--------|----------------|------------|
+| Admin  | `admin`        | `admin123` |
+| Buyer  | `buyer_demo`   | `buyer123` |
+| Seller | `seller_demo`  | `seller123` |
+
+> The seed script is located at `GoodBite/management/commands/seed.py`.  
+> Modify it later to include demo products, orders, or other data as the project evolves.
+
+---
+
+## 🐘 PostgreSQL Access
+
+### 5️⃣ Connect to the PostgreSQL database
 ```bash
 docker exec -it as-project-db-1 psql -U as_user -d as_db
 ```
 > Opens the PostgreSQL interactive shell inside the database container.
 
-### 6. List all tables
+### 6️⃣ List all tables
 Once inside the PostgreSQL shell:
 ```sql
 \dt
@@ -53,15 +75,15 @@ Once inside the PostgreSQL shell:
 
 ---
 
-## Accessing the Web App
+## 🌐 Accessing the Web App
 
 After the containers are running, open your browser and go to:
 
-[http://localhost:8000](http://localhost:8000)
+👉 [http://localhost:8000](http://localhost:8000)
 
 ---
 
-## Useful Commands
+## 🧰 Useful Commands
 
 Stop all containers:
 ```bash
@@ -80,5 +102,6 @@ docker compose restart web
 
 ---
 
-**Authors:** ...  
-**Version:** 1.0
+## 👥 Authors
+- *Team GoodBite*  
+- **Version:** 1.1
