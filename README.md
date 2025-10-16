@@ -1,6 +1,7 @@
 # 🥗 GoodBite (AS Project)
 
 A web application built with **Django** and **PostgreSQL**, managed via **Docker Compose**.
+Use the **Makefile** for all the commands explained below
 
 ---
 
