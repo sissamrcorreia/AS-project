@@ -59,6 +59,15 @@ This command will create the base demo users:
 
 ---
 
+## 🔐 Roles and Permissions
+
+To create the base user roles and permissions, run:
+
+```bash
+docker compose exec web python manage.py create_roles
+
+---
+
 ## 🐘 PostgreSQL Access
 
 ### 5️⃣ Connect to the PostgreSQL database

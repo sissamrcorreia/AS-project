@@ -55,6 +55,10 @@ shell:
 seed:
 	docker compose exec web python manage.py seed
 
+# Load base user roles and permissions
+roles:
+	docker compose exec web python manage.py setup_roles
+
 # Drop and recreate the database (dangerous)
 resetdb:
 	docker compose exec web python manage.py flush --no-input
