@@ -44,8 +44,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'login',
-    'agenda',
+    'GoodBite',
 ]
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
