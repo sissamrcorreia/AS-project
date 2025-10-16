@@ -64,7 +64,7 @@ This command will create the base demo users:
 To create the base user roles and permissions, run:
 
 ```bash
-docker compose exec web python manage.py create_roles
+docker compose exec web python manage.py setup_roles
 
 ---
 
