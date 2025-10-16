@@ -3,29 +3,25 @@
 # Simplify common Docker + Django commands
 # =========================================================
 
-# Variables
-DOCKER_COMPOSE = docker compose
-WEB_SERVICE = web
-
 # =========================================================
 # 📦 Setup & Environment
 # =========================================================
 
 # Build and start all containers
 up:
-	$(DOCKER_COMPOSE) up --build
+	docker compose up --build
 
 # Stop all containers
 down:
-	$(DOCKER_COMPOSE) down
+	docker compose down
 
 # Restart only the web service
 restart:
-	$(DOCKER_COMPOSE) restart $(WEB_SERVICE)
+	docker compose restart web
 
 # Show container logs (live)
 logs:
-	$(DOCKER_COMPOSE) logs -f
+	docker compose logs -f
 
 # =========================================================
 # ⚙️ Django Management
@@ -33,23 +29,23 @@ logs:
 
 # Run database migrations
 migrate:
-	$(DOCKER_COMPOSE) exec $(WEB_SERVICE) python manage.py migrate
+	docker compose exec web python manage.py migrate
 
 # Make new migrations (detect model changes)
 makemigrations:
-	$(DOCKER_COMPOSE) exec $(WEB_SERVICE) python manage.py makemigrations
+	docker compose exec web python manage.py makemigrations
 
 # Create Django superuser
 superuser:
-	$(DOCKER_COMPOSE) exec $(WEB_SERVICE) python manage.py createsuperuser
+	docker compose exec web python manage.py createsuperuser
 
 # Run the Django development server (inside container)
 runserver:
-	$(DOCKER_COMPOSE) exec $(WEB_SERVICE) python manage.py runserver 0.0.0.0:8000
+	docker compose exec web python manage.py runserver 0.0.0.0:8000
 
 # Open Django shell
 shell:
-	$(DOCKER_COMPOSE) exec $(WEB_SERVICE) python manage.py shell
+	docker compose exec web python manage.py shell
 
 # =========================================================
 # 🌱 Seed & Database
@@ -57,11 +53,11 @@ shell:
 
 # Load initial demo data (users, etc.)
 seed:
-	$(DOCKER_COMPOSE) exec $(WEB_SERVICE) python manage.py seed
+	docker compose exec web python manage.py seed
 
 # Drop and recreate the database (dangerous)
 resetdb:
-	$(DOCKER_COMPOSE) exec $(WEB_SERVICE) python manage.py flush --no-input
+	docker compose exec web python manage.py flush --no-input
 	$(MAKE) migrate
 	$(MAKE) seed
 
@@ -79,7 +75,7 @@ clean:
 
 # List running containers
 ps:
-	$(DOCKER_COMPOSE) ps
+	docker compose ps
 
 # Show database tables
 tables:
