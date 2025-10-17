@@ -63,6 +63,7 @@ roles:
 resetdb:
 	docker compose exec web python manage.py flush --no-input
 	$(MAKE) migrate
+	$(MAKE) roles
 	$(MAKE) seed
 
 # Access PostgreSQL shell
