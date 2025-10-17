@@ -13,7 +13,7 @@ class Command(BaseCommand):
     help = "Creates initial users (Customers & Sellers) and demo products with images"
 
     def handle(self, *args, **kwargs):
-        # === 1️⃣ Create roles ===
+        # === 1 Create roles ===
         customer_group, _ = Group.objects.get_or_create(name="Customer")
         seller_group, _ = Group.objects.get_or_create(name="Seller")
 
@@ -69,7 +69,7 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS("🎉 All users created successfully!"))
 
-        # === 2️⃣ Create demo products with images ===
+        # === 2 Create demo products with images ===
         try:
             seller = User.objects.get(username="uriSeller")
         except User.DoesNotExist:
