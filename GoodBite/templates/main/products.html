@@ -30,6 +30,17 @@
                                     {% if product.category %}
                                         <p class="mb-2"><strong>Category:</strong> {{ product.category }}</p>
                                     {% endif %}
+
+                                    <!-- Seller information -->
+                                    {% if product.created_by %}
+                                        <p class="mb-2"><strong>Seller:</strong> 
+                                            {% if product.created_by.first_name or product.created_by.last_name %}
+                                                {{ product.created_by.first_name }} {{ product.created_by.last_name }}
+                                            {% else %}
+                                                {{ product.created_by.username }}
+                                            {% endif %}
+                                        </p>
+                                    {% endif %}
                                     
                                     <!-- Action buttons for sellers -->
                                     {% if user.is_authenticated %}
