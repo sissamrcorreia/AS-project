@@ -1,14 +1,19 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
+from django.core.files import File
+from django.conf import settings
+import os
+
+from GoodBite.models import Product
 
 User = get_user_model()
 
 class Command(BaseCommand):
-    help = "Creates initial users for the database (Customers & Sellers)"
+    help = "Creates initial users (Customers & Sellers) and demo products with images"
 
     def handle(self, *args, **kwargs):
-        # Get roles
+        # === 1️⃣ Create roles ===
         customer_group, _ = Group.objects.get_or_create(name="Customer")
         seller_group, _ = Group.objects.get_or_create(name="Seller")
 
@@ -22,7 +27,6 @@ class Command(BaseCommand):
         ]
 
         for user_data in users:
-            # Crear admin especial
             if user_data["username"] == "admin":
                 if not User.objects.filter(username="admin").exists():
                     User.objects.create_superuser(**user_data)
@@ -33,7 +37,7 @@ class Command(BaseCommand):
 
             base_username = user_data["username"]
 
-            # Crear Customer
+            # Customer
             username_cust = f"{base_username}Customer"
             if not User.objects.filter(username=username_cust).exists():
                 user_cust = User.objects.create_user(
@@ -48,7 +52,7 @@ class Command(BaseCommand):
             else:
                 self.stdout.write(f"⚠ {username_cust} already exists")
 
-            # Crear Seller
+            # Seller
             username_sell = f"{base_username}Seller"
             if not User.objects.filter(username=username_sell).exists():
                 user_sell = User.objects.create_user(
@@ -64,3 +68,52 @@ class Command(BaseCommand):
                 self.stdout.write(f"⚠ {username_sell} already exists")
 
         self.stdout.write(self.style.SUCCESS("🎉 All users created successfully!"))
+
+        # === 2️⃣ Create demo products with images ===
+        try:
+            seller = User.objects.get(username="uriSeller")
+        except User.DoesNotExist:
+            self.stdout.write(self.style.ERROR("⚠ 'uriSeller' not found. Products skipped."))
+            return
+
+        products = [
+            {
+                "name": "Jamón Ibérico",
+                "description": "Jamón ibérico de bellota, curado artesanalmente con un sabor excepcional.",
+                "price": 120.00,
+                "image": "product1.jpg",
+            },
+            {
+                "name": "Tortilla de Patatas",
+                "description": "Clásica tortilla española jugosa, con huevos camperos y patatas de la huerta.",
+                "price": 8.50,
+                "image": "product2.jpg",
+            },
+            {
+                "name": "Pan con Tomate",
+                "description": "Rebanadas de pan crujiente con tomate rallado y aceite de oliva virgen extra.",
+                "price": 4.00,
+                "image": "product3.jpg",
+            },
+        ]
+
+        # Folder where images are stored (relative to the project)
+        images_folder = os.path.join(settings.BASE_DIR, "GoodBite", "static_seed_images")
+
+        for pdata in products:
+            image_path = os.path.join(images_folder, pdata["image"])
+            if not os.path.exists(image_path):
+                self.stdout.write(self.style.WARNING(f"⚠ Image not found: {image_path}"))
+                continue
+
+            with open(image_path, "rb") as f:
+                product = Product.objects.create(
+                    name=pdata["name"],
+                    description=pdata["description"],
+                    price=pdata["price"],
+                    created_by=seller,
+                )
+                product.image.save(pdata["image"], File(f), save=True)
+                self.stdout.write(self.style.SUCCESS(f"✔ Created product: {pdata['name']}"))
+
+        self.stdout.write(self.style.SUCCESS("🍽️ Demo products created successfully!"))
