@@ -71,6 +71,19 @@ def edit_product(request, pk):
         form = ProductForm(instance=product)
     return render(request, 'main/products.html', {'form': form, 'edit_mode': True, 'product': product})
 
+@permission_required('GoodBite.can_edit_own_product', raise_exception=True)
+@login_required
+def delete_product(request, pk):
+    product = get_object_or_404(Product, pk=pk)
+    if product.created_by != request.user:
+        return render(request, '403.html', status=403)
+    
+    if request.method == 'POST':
+        product.delete()
+        return redirect('product_list')
+    
+    return render(request, 'main/confirm_delete.html', {'product': product})
+
 @login_required
 def product_list(request):
     products = Product.objects.all()
