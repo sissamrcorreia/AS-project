@@ -139,3 +139,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # VARS OF REDIRECTION FOR LOGIN/LOGOUT
 LOGIN_REDIRECT_URL = 'home'
 LOGOUT_REDIRECT_URL = 'home'
+
+# Media files (user uploads)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+# Limit uploads to prevent denial-of-service attacks
+DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB global limit
+FILE_UPLOAD_PERMISSIONS = 0o644  # Restrict file read permissions
