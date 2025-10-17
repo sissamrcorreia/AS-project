@@ -1,43 +1,84 @@
 {% extends 'base.html' %}
-
 {% block content %}
 {% load crispy_forms_tags %}
 
-<h3>Products Page</h3>
+<div class="container mt-4">
+    <h3>Products Page</h3>
 
-<!-- TODO: how the product look like -->
-<!-- Display products only if not in create_mode or edit_mode -->
-{% if not create_mode and not edit_mode %}
-    {% if products %}
-        {% for product in products %}
-            <p>{{ product.name }}</p>
-        {% endfor %}
-    {% else %}
-        <p>No products available.</p>
-    {% endif %}
-{% endif %}
-
-{% if user.is_authenticated %}
-    {% for group in user.groups.all %}
-        {% if group.name == 'Seller' %}
-            {% if not create_mode and not edit_mode %}
-                <a href="{% url 'create_product' %}" class="btn btn-success">Create New Product</a>
-            {% endif %}
-            {% if create_mode %}
-                <br>
-                <div class="card mx-auto" style="width: 30rem;">
-                    <div class="card-body">
-                        <h5 class="card-title">Create New Product</h5>
-                        <form method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            {{ form|crispy }}
-                            <a href="{% url 'product_list' %}" class="btn btn-sm btn-secondary float-start">Cancel</a>
-                            <button type="submit" class="btn btn-sm btn-primary float-end">Save Product</button>
-                        </form>
+    <!-- Display products only if not in create_mode or edit_mode -->
+    {% if not create_mode and not edit_mode %}
+        {% if products %}
+            <div class="row">
+                {% for product in products %}
+                    <div class="col-md-4 mb-4">
+                        <div class="card h-100">
+                            {% if product.image %}
+                                <img src="{{ product.image.url }}" class="card-img-top" alt="{{ product.name }}" style="height: 200px; object-fit: cover;">
+                            {% else %}
+                                <div class="card-img-top bg-secondary d-flex align-items-center justify-content-center" style="height: 200px;">
+                                    <span class="text-white">No image</span>
+                                </div>
+                            {% endif %}
+                            
+                            <div class="card-body d-flex flex-column">
+                                <h5 class="card-title">{{ product.name }}</h5>
+                                <p class="card-text">{{ product.description|truncatewords:20 }}</p>
+                                
+                                <div class="mt-auto">
+                                    <p class="mb-2"><strong>Price:</strong> ${{ product.price }}</p>
+                                    <p class="mb-2"><strong>Stock:</strong> To be implemented</p>
+                                    {% if product.category %}
+                                        <p class="mb-2"><strong>Category:</strong> {{ product.category }}</p>
+                                    {% endif %}
+                                    
+                                    <!-- Action buttons for sellers -->
+                                    {% if user.is_authenticated %}
+                                        {% for group in user.groups.all %}
+                                            {% if group.name == 'Seller' and product.created_by == user %}
+                                                <div class="mt-3">
+                                                    <a href="{% url 'edit_product' product.id %}" class="btn btn-secondary">Edit</a>
+                                                </div>
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            {% endif %}
+                {% endfor %}
+            </div>
+        {% else %}
+            <div class="alert alert-info">No products available.</div>
         {% endif %}
-    {% endfor %}
-{% endif %}
+    {% endif %}
+
+    <!-- Create/Edit Product Button -->
+    {% if user.is_authenticated %}
+        {% for group in user.groups.all %}
+            {% if group.name == 'Seller' %}
+                {% if not create_mode and not edit_mode %}
+                    <a href="{% url 'create_product' %}" class="btn btn-success mb-4">Create New Product</a>
+                {% endif %}
+
+                <!-- Create Product Form -->
+                {% if create_mode %}
+                    <div class="card mx-auto mt-4" style="max-width: 600px;">
+                        <div class="card-body">
+                            <h5 class="card-title">Create New Product</h5>
+                            <form method="post" enctype="multipart/form-data">
+                                {% csrf_token %}
+                                {{ form|crispy }}
+                                <div class="mt-3">
+                                    <a href="{% url 'product_list' %}" class="btn btn-secondary">Cancel</a>
+                                    <button type="submit" class="btn btn-primary float-end">Save Product</button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+</div>
+
 {% endblock %}
