@@ -19,7 +19,7 @@ class Command(BaseCommand):
 
         users = [
             {"username": "admin", "first_name": "Admin", "last_name": "", "email": "admin@admin.com", "password": "admin", "is_superuser": True},
-            {"username": "sissa", "first_name": "Cecília Maria", "last_name": "Rodrigues", "email": "sissa@goodbite.com", "password": "sissa123"},
+            {"username": "sissa", "first_name": "Cecília Maria", "last_name": "Rodrigues Correia", "email": "sissa@goodbite.com", "password": "sissa123"},
             {"username": "uri", "first_name": "Oriol", "last_name": "Ramos Puig", "email": "uri@goodbite.com", "password": "uri123"},
             {"username": "anna", "first_name": "Anna", "last_name": "Melkumyan", "email": "anna@goodbite.com", "password": "anna123"},
             {"username": "johanna", "first_name": "Johanna", "last_name": "Nuñez", "email": "johanna@goodbite.com", "password": "johanna123"},
@@ -71,9 +71,10 @@ class Command(BaseCommand):
 
         # === 2 Create demo products with images ===
         try:
-            seller = User.objects.get(username="uriSeller")
+            uri_seller = User.objects.get(username="uriSeller")
+            sissa_seller = User.objects.get(username="sissaSeller")
         except User.DoesNotExist:
-            self.stdout.write(self.style.ERROR("⚠ 'uriSeller' not found. Products skipped."))
+            self.stdout.write(self.style.ERROR("⚠ 'uriSeller' or 'sissaSeller' not found. Products skipped."))
             return
 
         products = [
@@ -82,18 +83,21 @@ class Command(BaseCommand):
                 "description": "Jamón ibérico de bellota, curado artesanalmente con un sabor excepcional.",
                 "price": 120.00,
                 "image": "product1.jpg",
+                "created_by": uri_seller,
             },
             {
                 "name": "Tortilla de Patatas",
                 "description": "Clásica tortilla española jugosa, con huevos camperos y patatas de la huerta.",
                 "price": 8.50,
                 "image": "product2.jpg",
+                "created_by": uri_seller,
             },
             {
                 "name": "Pan con Tomate",
                 "description": "Rebanadas de pan crujiente con tomate rallado y aceite de oliva virgen extra.",
                 "price": 4.00,
                 "image": "product3.jpg",
+                "created_by": sissa_seller,
             },
         ]
 
@@ -111,7 +115,7 @@ class Command(BaseCommand):
                     name=pdata["name"],
                     description=pdata["description"],
                     price=pdata["price"],
-                    created_by=seller,
+                    created_by=pdata["created_by"],
                 )
                 product.image.save(pdata["image"], File(f), save=True)
                 self.stdout.write(self.style.SUCCESS(f"✔ Created product: {pdata['name']}"))

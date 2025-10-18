@@ -55,6 +55,10 @@ shell:
 seed:
 	docker compose exec web python manage.py seed
 
+# Clear all seeded data (users, products, etc.)
+clearseed:
+	docker compose exec web python manage.py cleardata
+
 # Load base user roles and permissions
 roles:
 	docker compose exec web python manage.py setup_roles
