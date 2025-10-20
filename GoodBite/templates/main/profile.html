@@ -5,6 +5,19 @@
 {% block content %}
   <h1>Profile of {{ user_obj.username }}</h1>
 
+  {% load static %}
+    <div class="mb-3 text-center">
+        <img src="{% static 'avatar_placeholder.png' %}"
+             alt="Profile picture placeholder"
+             id="profile-picture"
+             class="rounded-circle"
+             style="width: 120px; height: 120px; object-fit: cover;">
+    </div>
+
+    <div id="touched-message" class="text-center mt-2" style="display: none; color: #2d4a3e; font-weight: bold;">
+        Touched!
+    </div>
+
   {% if edit_mode %}
     <form method="post" class="mt-4">
       {% csrf_token %}
@@ -20,19 +33,27 @@
         <label class="form-label"><strong>Email:</strong></label>
         {{ form.email }}
       </div>
+        <div class="mb-3">
+        <label class="form-label"><strong>Phone number:</strong></label>
+        {{ form.email }}
+      </div>
+        <div class="mb-3">
+        <label class="form-label"><strong>Birthday:</strong></label>
+        {{ form.email }}
+      </div>
       <div class="mb-3">
         <label class="form-label"><strong>Date joined:</strong></label>
         <input type="text" class="form-control" value="{{ user_obj.date_joined }}" disabled>
       </div>
       <div class="text-end mt-3">
-        <button type="submit" class="btn"
-          style="background-color:#2d4a3e; color:white; text-transform:uppercase;">
-          Save
-        </button>
         <a href="{% url 'profile' user_obj.username %}"
           class="btn btn-secondary text-uppercase">
           Cancel
         </a>
+          <button type="submit" class="btn"
+          style="background-color:#2d4a3e; color:white; text-transform:uppercase;">
+          Save
+        </button>
       </div>
     </form>
   {% else %}
@@ -40,6 +61,8 @@
       <li><strong>Name:</strong> {{ user_obj.first_name }}</li>
       <li><strong>Surname:</strong> {{ user_obj.last_name }}</li>
       <li><strong>Email:</strong> {{ user_obj.email }}</li>
+      <li><strong>Phone number:</strong> {{ user_obj.email }}</li>
+      <li><strong>Birthday:</strong> {{ user_obj.email }}</li>
       <li><strong>Date joined:</strong> {{ user_obj.date_joined }}</li>
     </ul>
     {% if request.user == user_obj or request.user.is_staff %}
@@ -52,4 +75,28 @@
       </div>
     {% endif %}
   {% endif %}
+    {% if messages %}
+      <div class="mt-4">
+        {% for message in messages %}
+          <div class="alert alert-{{ message.tags }}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+    {% endif %}
+
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const profilePic = document.getElementById("profile-picture");
+        const touchedMsg = document.getElementById("touched-message");
+
+        if (profilePic && touchedMsg) {
+          profilePic.addEventListener("click", function () {
+            touchedMsg.style.display = "block";
+            setTimeout(() => { touchedMsg.style.display = "none"; }, 2000);
+          });
+        }
+      });
+    </script>
 {% endblock %}
+

@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout, authenticate, login, get_user_model
 from .forms import CustomUserCreationForm, ProductForm, UserUpdateForm
 from .models import Product
+from django.contrib import messages
 
 # Create your views here.
 def home(request):
@@ -30,9 +31,16 @@ def profile(request, username):
     if request.method == "POST":
         form = UserUpdateForm(request.POST, instance=user)
         if form.is_valid():
-            form.save()
-            return redirect('profile', username=user.username)
-        edit_mode = True
+            try:
+                form.save()
+                messages.success(request, "Data saved successfully")
+                return redirect('profile', username=user.username)
+            except Exception:
+                messages.error(request, "Oh no, an unexpected error happened. Try again later.")
+                edit_mode = True
+        else:
+            messages.error(request, "Oh no, an unexpected error happened. Try again later.")
+            edit_mode = True
     else:
         form = UserUpdateForm(instance=user)
 

@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/5.2/ref/settings/
 """
 
 from pathlib import Path
+from django.contrib.messages import constants as messages
 import os
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -77,6 +78,10 @@ TEMPLATES = [
     },
 ]
 
+MESSAGE_TAGS = {
+    messages.ERROR: 'danger',
+}
+
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
@@ -130,6 +135,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'GoodBite' / 'static_seed_images',
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
