@@ -1,10 +1,8 @@
-from urllib import request
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
-from django.contrib.auth import logout, authenticate, login
-from .forms import CustomUserCreationForm
+from django.contrib.auth import logout, authenticate, login, get_user_model
+from .forms import CustomUserCreationForm, ProductForm, UserUpdateForm
 from .models import Product
-from .forms import ProductForm
 
 # Create your views here.
 def home(request):
@@ -18,6 +16,31 @@ def features(request):
 def products(request):
     products = Product.objects.all()
     return render(request, 'main/products.html', {'products': products})
+
+
+def profile(request, username):
+    user_model = get_user_model()
+    user = get_object_or_404(user_model, username=username)
+
+    if request.user != user and not request.user.is_staff:
+        return redirect('home')
+
+    edit_mode = request.GET.get("edit") == "1"
+
+    if request.method == "POST":
+        form = UserUpdateForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect('profile', username=user.username)
+        edit_mode = True
+    else:
+        form = UserUpdateForm(instance=user)
+
+    return render(request, 'main/profile.html', {
+        'user_obj': user,
+        'form': form,
+        "edit_mode": edit_mode
+    })
 
 def exit(request):
     logout(request)

@@ -80,6 +80,9 @@
                         </li>
                         {% if request.user.is_authenticated %}
                             <li class="nav-item">
+                                 <a class="nav-link" href="{% url 'profile' request.user.username %}">Profile</a>
+                            </li>
+                            <li class="nav-item">
                                 <a class="nav-link" href="{% url 'exit' %}">Logout</a>
                             </li>
                         {% else %}

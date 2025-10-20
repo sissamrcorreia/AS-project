@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% block title %}Profile{% endblock %}
+
+{% block content %}
+  <h1>Profile of {{ user_obj.username }}</h1>
+
+  {% if edit_mode %}
+    <form method="post" class="mt-4">
+      {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label"><strong>Name:</strong></label>
+        {{ form.first_name }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label"><strong>Surname:</strong></label>
+        {{ form.last_name }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label"><strong>Email:</strong></label>
+        {{ form.email }}
+      </div>
+      <div class="mb-3">
+        <label class="form-label"><strong>Date joined:</strong></label>
+        <input type="text" class="form-control" value="{{ user_obj.date_joined }}" disabled>
+      </div>
+      <div class="text-end mt-3">
+        <button type="submit" class="btn"
+          style="background-color:#2d4a3e; color:white; text-transform:uppercase;">
+          Save
+        </button>
+        <a href="{% url 'profile' user_obj.username %}"
+          class="btn btn-secondary text-uppercase">
+          Cancel
+        </a>
+      </div>
+    </form>
+  {% else %}
+    <ul>
+      <li><strong>Name:</strong> {{ user_obj.first_name }}</li>
+      <li><strong>Surname:</strong> {{ user_obj.last_name }}</li>
+      <li><strong>Email:</strong> {{ user_obj.email }}</li>
+      <li><strong>Date joined:</strong> {{ user_obj.date_joined }}</li>
+    </ul>
+    {% if request.user == user_obj or request.user.is_staff %}
+      <div class="text-end mt-3">
+        <a href="{% url 'profile' user_obj.username %}?edit=1"
+           class="btn"
+           style="background-color:#2d4a3e; color:white; text-transform:uppercase;">
+          Edit
+        </a>
+      </div>
+    {% endif %}
+  {% endif %}
+{% endblock %}
