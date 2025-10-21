@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.conf import settings
 from .validators import ValidateImageFile
 import os
 import uuid
@@ -26,3 +27,21 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+
+def profile_image_path(instance, filename):
+    ext = filename.split('.')[-1].lower()
+    filename = f"{uuid.uuid4()}.{ext}"
+    return os.path.join('profile', filename)
+
+class Profile(models.Model):
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="profile"
+    )
+    phone_number = models.CharField(max_length=9, blank=True)
+    birthdate = models.DateField(null=True, blank=True)
+    avatar = models.ImageField(upload_to=profile_image_path, blank=True, null=True, validators=[ValidateImageFile()])
+
+    def __str__(self):
+        return f"Profile({self.user.username})"
