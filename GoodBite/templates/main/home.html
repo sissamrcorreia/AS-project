@@ -112,12 +112,13 @@
         </div>
     </section>
 
-    <!-- Call to Action Section -->
-    <section class="cta-section">
-        <div class="container">
-            <h2>Join the Food Rescue Revolution</h2>
-            <p>Sign up today to start saving delicious meals, supporting local businesses, and making a difference for the planet.</p>
-            <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Get Started</a>
-        </div>
-    </section>
+    {% if not request.user.is_authenticated %}
+        <section class="cta-section">
+            <div class="container">
+                <h2>Join the Food Rescue Revolution</h2>
+                <p>Sign up today to start saving delicious meals, supporting local businesses, and making a difference for the planet.</p>
+                <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Get Started</a>
+            </div>
+        </section>
+    {% endif %}
 {% endblock %}

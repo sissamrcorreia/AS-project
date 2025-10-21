@@ -1,8 +1,8 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
 from django.contrib.auth import logout, authenticate, login, get_user_model
-from .forms import CustomUserCreationForm, ProductForm, UserUpdateForm
-from .models import Product
+from .forms import CustomUserCreationForm, ProductForm, UserUpdateForm, ProfileUpdateForm
+from .models import Product, Profile
 from django.contrib import messages
 
 # Create your views here.
@@ -26,13 +26,17 @@ def profile(request, username):
     if request.user != user and not request.user.is_staff:
         return redirect('home')
 
+    profile_obj, _ = Profile.objects.get_or_create(user=user)
+
     edit_mode = request.GET.get("edit") == "1"
 
     if request.method == "POST":
         form = UserUpdateForm(request.POST, instance=user)
+        form_profile = ProfileUpdateForm(request.POST, instance=profile_obj)
         if form.is_valid():
             try:
                 form.save()
+                form_profile.save()
                 messages.success(request, "Data saved successfully")
                 return redirect('profile', username=user.username)
             except Exception:
@@ -43,10 +47,12 @@ def profile(request, username):
             edit_mode = True
     else:
         form = UserUpdateForm(instance=user)
+        form_profile = ProfileUpdateForm(instance=profile_obj)
 
     return render(request, 'main/profile.html', {
         'user_obj': user,
         'form': form,
+        'form_profile': form_profile,
         "edit_mode": edit_mode
     })
 

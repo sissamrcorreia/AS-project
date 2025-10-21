@@ -3,7 +3,7 @@
 {% block title %}Profile{% endblock %}
 
 {% block content %}
-  <h1>Profile of {{ user_obj.username }}</h1>
+  <h3>Profile of {{ user_obj.username }}</h3>
 
   {% load static %}
     <div class="mb-3 text-center">
@@ -35,11 +35,11 @@
       </div>
         <div class="mb-3">
         <label class="form-label"><strong>Phone number:</strong></label>
-        {{ form.email }}
+        {{ form_profile.phone_number }}
       </div>
         <div class="mb-3">
         <label class="form-label"><strong>Birthday:</strong></label>
-        {{ form.email }}
+        {{ form_profile.birthdate }}
       </div>
       <div class="mb-3">
         <label class="form-label"><strong>Date joined:</strong></label>
@@ -61,8 +61,8 @@
       <li><strong>Name:</strong> {{ user_obj.first_name }}</li>
       <li><strong>Surname:</strong> {{ user_obj.last_name }}</li>
       <li><strong>Email:</strong> {{ user_obj.email }}</li>
-      <li><strong>Phone number:</strong> {{ user_obj.email }}</li>
-      <li><strong>Birthday:</strong> {{ user_obj.email }}</li>
+      <li><strong>Phone number:</strong> {{ user_obj.profile.phone_number|default:"--" }}</li>
+      <li><strong>Birthday:</strong> {{ user_obj.profile.birthdate|date:"Y-m-d"|default:"--" }}</li>
       <li><strong>Date joined:</strong> {{ user_obj.date_joined }}</li>
     </ul>
     {% if request.user == user_obj or request.user.is_staff %}
