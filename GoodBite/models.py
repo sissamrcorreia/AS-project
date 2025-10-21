@@ -28,7 +28,7 @@ class Product(models.Model):
     def __str__(self):
         return self.name
 
-def profile_image_path(filename):
+def profile_image_path(instance, filename):
     ext = filename.split('.')[-1].lower()
     filename = f"{uuid.uuid4()}.{ext}"
     return os.path.join('profile', filename)

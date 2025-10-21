@@ -19,19 +19,23 @@ class ProductForm(forms.ModelForm):
         model = Product
         fields = ['name', 'description', 'image', 'price']
 
+class CustomFileInput(forms.ClearableFileInput):
+    template_name = 'widgets/custom_file_input.html'
+
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
         fields = ['phone_number', 'birthdate', 'avatar']
         widgets = {
             'phone_number': forms.TextInput(attrs={
-                'placeholder': 'Add phone number…'
+                'placeholder': 'add a phone number'
             }),
             'birthdate': forms.DateInput(attrs={
                 'type': 'date',
                 'placeholder': 'YYYY-MM-DD',
                 'max': datetime.date.today().isoformat(),
             }),
+            'avatar': CustomFileInput(),
         }
 
     def clean_birthdate(self):

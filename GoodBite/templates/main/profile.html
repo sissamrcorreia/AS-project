@@ -5,18 +5,31 @@
 {% block content %}
   <h3>Profile of {{ user_obj.username }}</h3>
 
-  {% load static %}
+    {% load static %}
     <div class="mb-3 text-center">
+      {% if user_obj.profile.avatar %}
+        <img src="{{ user_obj.profile.avatar.url }}"
+             alt="Profile picture"
+             id="profile-picture"
+             class="rounded-circle"
+             style="width: 120px; height: 120px; object-fit: cover; object-position: center; border: 2px solid #ccc;">
+      {% else %}
         <img src="{% static 'avatar_placeholder.png' %}"
              alt="Profile picture placeholder"
              id="profile-picture"
              class="rounded-circle"
              style="width: 120px; height: 120px; object-fit: cover;">
+      {% endif %}
     </div>
 
   {% if edit_mode %}
-    <form method="post" class="mt-4">
+    <form method="post" enctype="multipart/form-data" class="mt-4">
       {% csrf_token %}
+      <div class="mb-3">
+        <label class="form-label"><strong>Profile image:</strong></label>
+        {{ form_profile.avatar }}
+        {{ form_profile.avatar.errors }}
+      </div>
       <div class="mb-3">
         <label class="form-label"><strong>Name:</strong></label>
         {{ form.first_name }}
@@ -54,9 +67,9 @@
     </form>
   {% else %}
     <ul>
-      <li><strong>Name:</strong> {{ user_obj.first_name }}</li>
-      <li><strong>Surname:</strong> {{ user_obj.last_name }}</li>
-      <li><strong>Email:</strong> {{ user_obj.email }}</li>
+      <li><strong>Name:</strong> {{ user_obj.first_name|default:"--" }}</li>
+      <li><strong>Surname:</strong> {{ user_obj.last_name|default:"--" }}</li>
+      <li><strong>Email:</strong> {{ user_obj.email|default:"--" }}</li>
       <li><strong>Phone number:</strong> {{ user_obj.profile.phone_number|default:"--" }}</li>
       <li><strong>Birthday:</strong> {{ user_obj.profile.birthdate|date:"d-m-Y"|default:"--" }}</li>
       <li><strong>Date joined:</strong> {{ user_obj.date_joined }}</li>

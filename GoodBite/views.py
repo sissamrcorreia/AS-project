@@ -32,7 +32,7 @@ def profile(request, username):
 
     if request.method == "POST":
         form = UserUpdateForm(request.POST, instance=user)
-        form_profile = ProfileUpdateForm(request.POST, instance=profile_obj)
+        form_profile = ProfileUpdateForm(request.POST, request.FILES, instance=profile_obj)
 
         if form.is_valid() and form_profile.is_valid():
             try:
