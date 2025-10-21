@@ -2,11 +2,19 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 from .validators import ValidateImageFile
+import os
+import uuid
+
+
+def product_image_path(instance, filename):
+    ext = filename.split('.')[-1].lower()
+    filename = f"{uuid.uuid4()}.{ext}"
+    return os.path.join('products', filename)
 
 class Product(models.Model):
     name = models.CharField(max_length=200)
     description = models.TextField()
-    image = models.ImageField(upload_to='products/', blank=True, null=True, validators=[ValidateImageFile()])
+    image = models.ImageField(upload_to=product_image_path, blank=True, null=True, validators=[ValidateImageFile()])
     price = models.DecimalField(max_digits=10, decimal_places=2)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products')
 
