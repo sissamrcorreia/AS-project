@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
 from .models import Product, Profile
+import datetime
 
 class CustomUserCreationForm(UserCreationForm):
     class Meta:
@@ -21,16 +22,28 @@ class ProductForm(forms.ModelForm):
 class ProfileUpdateForm(forms.ModelForm):
     class Meta:
         model = Profile
-        fields = ['phone_number', 'birthdate']
+        fields = ['phone_number', 'birthdate', 'avatar']
         widgets = {
             'phone_number': forms.TextInput(attrs={
                 'placeholder': 'Add phone number…'
             }),
             'birthdate': forms.DateInput(attrs={
-                'type': 'date',  # datepicker nativo
-                'placeholder': 'YYYY-MM-DD'
+                'type': 'date',
+                'placeholder': 'YYYY-MM-DD',
+                'max': datetime.date.today().isoformat(),
             }),
         }
 
-    # block for no future dates and if birthdate is less tah  16 years ago, message error
-    # also add the picture thing
+    def clean_birthdate(self):
+        birthdate = self.cleaned_data.get("birthdate")
+        if not birthdate:
+            return birthdate
+
+        today = datetime.date.today()
+
+        age = today.year - birthdate.year - (
+                (today.month, today.day) < (birthdate.month, birthdate.day)
+        )
+        if age < 16:
+            raise forms.ValidationError("You must be 16 years old to use GoodBite")
+        return birthdate

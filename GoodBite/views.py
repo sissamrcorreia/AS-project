@@ -33,7 +33,8 @@ def profile(request, username):
     if request.method == "POST":
         form = UserUpdateForm(request.POST, instance=user)
         form_profile = ProfileUpdateForm(request.POST, instance=profile_obj)
-        if form.is_valid():
+
+        if form.is_valid() and form_profile.is_valid():
             try:
                 form.save()
                 form_profile.save()
@@ -43,8 +44,13 @@ def profile(request, username):
                 messages.error(request, "Oh no, an unexpected error happened. Try again later.")
                 edit_mode = True
         else:
-            messages.error(request, "Oh no, an unexpected error happened. Try again later.")
-            edit_mode = True
+            birthdate_errors = form_profile.errors.get('birthdate')
+            if birthdate_errors:
+                messages.error(request, birthdate_errors[0])
+                edit_mode = True
+            else:
+                messages.error(request, "Oh no, an unexpected error happened. Try again later.")
+                edit_mode = True
     else:
         form = UserUpdateForm(instance=user)
         form_profile = ProfileUpdateForm(instance=profile_obj)
