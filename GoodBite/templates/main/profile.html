@@ -93,5 +93,10 @@
         {% endfor %}
       </div>
     {% endif %}
-{% endblock %}
 
+    {% if user_obj.is_authenticated and 'Seller' not in user_obj.groups.all|join:"," %}
+      <div class="mt-4 text-center">
+        <p>Contact us if you want to be a seller: <a href="mailto:seller@goodbites.com">seller@goodbites.com</a></p>
+      </div>
+    {% endif %}
+{% endblock %}
