@@ -10,7 +10,7 @@ from GoodBite.models import Product
 User = get_user_model()
 
 class Command(BaseCommand):
-    help = "Creates initial users (Customers & Sellers) and demo products with images"
+    help = "Creates initial users (Customers & Sellers) and demo products with images and stock"
 
     def handle(self, *args, **kwargs):
         # === 1 Create roles ===
@@ -69,7 +69,7 @@ class Command(BaseCommand):
 
         self.stdout.write(self.style.SUCCESS("🎉 All users created successfully!"))
 
-        # === 2 Create demo products with images ===
+        # === 2 Create demo products with images and STOCK ===
         try:
             uri_seller = User.objects.get(username="uriSeller")
             sissa_seller = User.objects.get(username="sissaSeller")
@@ -84,6 +84,7 @@ class Command(BaseCommand):
                 "price": 120.00,
                 "image": "product1.jpg",
                 "created_by": uri_seller,
+                "stock": 5,
             },
             {
                 "name": "Tortilla de Patatas",
@@ -91,6 +92,7 @@ class Command(BaseCommand):
                 "price": 8.50,
                 "image": "product2.jpg",
                 "created_by": uri_seller,
+                "stock": 2,
             },
             {
                 "name": "Pan con Tomate",
@@ -98,6 +100,7 @@ class Command(BaseCommand):
                 "price": 4.00,
                 "image": "product3.jpg",
                 "created_by": sissa_seller,
+                "stock": 20,
             },
         ]
 
@@ -116,8 +119,9 @@ class Command(BaseCommand):
                     description=pdata["description"],
                     price=pdata["price"],
                     created_by=pdata["created_by"],
+                    stock=pdata["stock"],
                 )
                 product.image.save(pdata["image"], File(f), save=True)
                 self.stdout.write(self.style.SUCCESS(f"✔ Created product: {pdata['name']}"))
 
-        self.stdout.write(self.style.SUCCESS("🍽️ Demo products created successfully!"))
+        self.stdout.write(self.style.SUCCESS("Demo products with stock created successfully!"))
