@@ -129,5 +129,19 @@ def delete_product(request, pk):
 
 @login_required
 def product_list(request):
-    products = Product.objects.all()
+    products = Product.objects.all().order_by('id')
     return render(request, 'main/products.html', {'products': products})
+
+@login_required
+def buy_product(request, product_id):
+    product = get_object_or_404(Product, id=product_id)
+
+    if product.stock <= 0:
+        messages.error(request, f"Sorry, {product.name} is out of stock.")
+        return redirect('product_list')
+
+    product.stock -= 1
+    product.save()
+
+    messages.success(request, f"You successfully bought {product.name}! Stock left: {product.stock}")
+    return redirect('product_list')

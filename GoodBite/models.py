@@ -17,6 +17,7 @@ class Product(models.Model):
     image = models.ImageField(upload_to=product_image_path, blank=True, null=True, validators=[ValidateImageFile()])
     price = models.DecimalField(max_digits=10, decimal_places=2)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products')
+    stock = models.PositiveIntegerField(default=0)
 
     class Meta:
         permissions = [

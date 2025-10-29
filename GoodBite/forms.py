@@ -17,7 +17,7 @@ class UserUpdateForm(forms.ModelForm):
 class ProductForm(forms.ModelForm):
     class Meta:
         model = Product
-        fields = ['name', 'description', 'image', 'price']
+        fields = ['name', 'description', 'image', 'price', 'stock']
 
 class CustomFileInput(forms.ClearableFileInput):
     template_name = 'widgets/custom_file_input.html'
