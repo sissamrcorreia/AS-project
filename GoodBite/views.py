@@ -4,6 +4,7 @@ from django.contrib.auth import logout, authenticate, login, get_user_model
 from .forms import CustomUserCreationForm, ProductForm, UserUpdateForm, ProfileUpdateForm
 from .models import Product, Profile
 from django.contrib import messages
+from django.db.models import Q
 
 # Create your views here.
 def home(request):
@@ -17,7 +18,6 @@ def features(request):
 def products(request):
     products = Product.objects.all()
     return render(request, 'main/products.html', {'products': products})
-
 
 def profile(request, username):
     user_model = get_user_model()
@@ -129,8 +129,22 @@ def delete_product(request, pk):
 
 @login_required
 def product_list(request):
+    q = (request.GET.get('q') or '').strip()
     products = Product.objects.all().order_by('id')
-    return render(request, 'main/products.html', {'products': products})
+
+    if q:
+        products = products.filter(
+            Q(name__icontains=q) |
+            Q(description__icontains=q) |
+            Q(created_by__username__icontains=q) |
+            Q(created_by__first_name__icontains=q) |
+            Q(created_by__last_name__icontains=q)
+        )
+
+    return render(request, 'main/products.html', {
+        'products': products,
+        'q': q,
+    })
 
 @login_required
 def buy_product(request, product_id):

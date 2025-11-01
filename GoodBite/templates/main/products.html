@@ -5,6 +5,38 @@
 <div class="container" style="padding-top: 0;">
     <h3>Products Page</h3>
 
+    <!-- Searching bar -->
+    {% if not create_mode and not edit_mode %}
+        <form method="get" class="row align-items-center mb-4 g-2">
+            <div class="col-12 col-md-9">
+                <input type="text" name="q" value="{{ q|default_if_none:'' }}"
+                       class="form-control form-control-lg"
+                       placeholder="Search by name, description or seller"
+                       style="border-radius:0; height:45px;">
+            </div>
+
+            <div class="col-6 col-md-2 d-flex">
+                <button type="submit"
+                        class="btn flex-fill text-uppercase"
+                        style="background-color:#2d4a3e; color:white; border-radius:0; height:45px; display:flex; align-items:center; justify-content:center;">
+                    Search
+                </button>
+            </div>
+
+            <div class="col-6 col-md-1 d-flex">
+                <a href="{% url 'product_list' %}"
+                   class="btn btn-secondary text-uppercase flex-fill"
+                   style="border-radius:0; height:45px; display:flex; align-items:center; justify-content:center;">
+                    Clear
+                </a>
+            </div>
+        </form>
+
+        {% if q %}
+            <p class="text-muted mt-2">Results for "<strong>{{ q }}</strong>": {{ products|length }}</p>
+        {% endif %}
+    {% endif %}
+
     <!-- Display products only if not in create_mode or edit_mode -->
     {% if not create_mode and not edit_mode %}
         {% if products %}
