@@ -104,7 +104,7 @@ def create_product(request):
 def edit_product(request, pk):
     product = get_object_or_404(Product, pk=pk)
     if product.created_by != request.user:
-        return render(request, '403.html', status=403)  # TODO: Custom 403 page if not owner
+        return render(request, '403.html', status=403)
     if request.method == 'POST':
         form = ProductForm(request.POST, request.FILES, instance=product)
         if form.is_valid():
