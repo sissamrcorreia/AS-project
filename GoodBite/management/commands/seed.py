@@ -62,6 +62,7 @@ class Command(BaseCommand):
                     email=f"{base_username.lower()}seller@goodbite.com",
                     password=user_data["password"]
                 )
+                user_sell.groups.remove(customer_group)
                 user_sell.groups.add(seller_group)
                 self.stdout.write(self.style.SUCCESS(f"✔ {username_sell} (Seller) created"))
             else:
