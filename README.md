@@ -1,7 +1,7 @@
-# 🥗 GoodBite (AS Project)
+# 🥗 GoodBite
 
-A web application built with **Django** and **PostgreSQL**, managed via **Docker Compose**.
-Use the **Makefile** for all the commands explained below
+Project of Applications Security. A web application built with **Django** and **PostgreSQL**, managed via **Docker Compose**.
+Use the **Makefile** for all the commands explained below.
 
 ---
 
@@ -65,7 +65,16 @@ To create the base user roles and permissions, run:
 
 ```bash
 docker compose exec web python manage.py setup_roles
+```
+---
 
+## 🚮 Clear data
+
+To all seeded data, run:
+
+```bash
+docker compose exec web python manage.py cleardata
+```
 ---
 
 ## 🐘 PostgreSQL Access
@@ -113,5 +122,6 @@ docker compose restart web
 ---
 
 ## 👥 Authors
-- *Team GoodBite*  
+- *Team GoodBite:*
+Anna Melkumyan Canosa; Cecília Maria Rodrigues Correia; Irene Cerván Barriga; Johanna Nuñez Diaz; Oriol Ramos Puig
 - **Version:** 1.1
