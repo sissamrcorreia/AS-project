@@ -18,6 +18,7 @@ class Product(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE, related_name='products')
     stock = models.PositiveIntegerField(default=0)
+    initial_stock = models.PositiveIntegerField(default=0)
 
     class Meta:
         permissions = [
@@ -28,6 +29,17 @@ class Product(models.Model):
 
     def __str__(self):
         return self.name
+    
+    def save(self, *args, **kwargs):
+        if not self.pk:  # it does not exist yet
+            self.initial_stock = self.stock
+        super().save(*args, **kwargs)
+
+    def sold_units(self):
+        return max(0, self.initial_stock - self.stock)
+
+    def total_revenue(self):
+        return self.sold_units() * float(self.price)
 
 def profile_image_path(instance, filename):
     ext = filename.split('.')[-1].lower()

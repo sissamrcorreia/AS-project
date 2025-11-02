@@ -1,0 +1,324 @@
+{% extends 'base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container" style="padding-top: 0;">
+    <h3 class="mb-4">Statistics Dashboard</h3>
+
+    <!-- Estadísticas Generales -->
+    <div class="row mb-4">
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-muted text-uppercase mb-2">Total Products</h6>
+                    <h2 class="mb-0" style="color: #2d4a3e;">{{ total_products }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-muted text-uppercase mb-2">Active Products</h6>
+                    <h2 class="mb-0" style="color: #2d4a3e;">{{ total_active_products }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-muted text-uppercase mb-2">Units Sold</h6>
+                    <h2 class="mb-0" style="color: #2d4a3e;">{{ total_units_sold }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="card shadow-sm h-100" style="background-color: #e8f5e9;">
+                <div class="card-body text-center">
+                    <h6 class="text-muted text-uppercase mb-2">Total Revenue</h6>
+                    <h2 class="mb-0 text-success">€{{ total_revenue|floatformat:2 }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="card shadow-sm h-100" style="background-color: #fff3e0;">
+                <div class="card-body text-center">
+                    <h6 class="text-muted text-uppercase mb-2">Stock Value</h6>
+                    <h2 class="mb-0 text-warning">€{{ total_stock_value|floatformat:2 }}</h2>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 mb-3">
+            <div class="card shadow-sm h-100">
+                <div class="card-body text-center">
+                    <h6 class="text-muted text-uppercase mb-2">Average Price</h6>
+                    <h2 class="mb-0" style="color: #2d4a3e;">€{{ avg_price|floatformat:2 }}</h2>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Top Vendedores -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3" style="color: #2d4a3e; border-bottom: 2px solid #2d4a3e; padding-bottom: 10px;">
+                🏆 Top Sellers
+            </h5>
+            {% if top_sellers %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead style="background-color: #2d4a3e; color: white;">
+                            <tr>
+                                <th>Rank</th>
+                                <th>Seller</th>
+                                <th>Products</th>
+                                <th>Units Sold</th>
+                                <th>Total Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for seller in top_sellers %}
+                            <tr>
+                                <td>
+                                    <span class="badge rounded-pill {% if forloop.counter == 1 %}bg-warning text-dark{% elif forloop.counter == 2 %}bg-secondary{% elif forloop.counter == 3 %}bg-danger{% else %}bg-dark{% endif %}">
+                                        #{{ forloop.counter }}
+                                    </span>
+                                </td>
+                                <td><strong>{{ seller.username }}</strong></td>
+                                <td><span class="badge bg-info">{{ seller.total_products }}</span></td>
+                                <td>{{ seller.total_units_sold|default:0 }} units</td>
+                                <td><strong class="text-success">€{{ seller.total_revenue|floatformat:2 }}</strong></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center">No seller data available yet.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Productos Más Vendidos -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3" style="color: #2d4a3e; border-bottom: 2px solid #2d4a3e; padding-bottom: 10px;">
+                🔥 Best Selling Products
+            </h5>
+            {% if top_products %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead style="background-color: #2d4a3e; color: white;">
+                            <tr>
+                                <th>Rank</th>
+                                <th>Product</th>
+                                <th>Seller</th>
+                                <th>Price</th>
+                                <th>Units Sold</th>
+                                <th>Revenue</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in top_products %}
+                            <tr>
+                                <td>
+                                    <span class="badge rounded-pill {% if forloop.counter == 1 %}bg-warning text-dark{% elif forloop.counter == 2 %}bg-secondary{% elif forloop.counter == 3 %}bg-danger{% else %}bg-dark{% endif %}">
+                                        #{{ forloop.counter }}
+                                    </span>
+                                </td>
+                                <td><strong>{{ product.name }}</strong></td>
+                                <td class="text-muted">{{ product.created_by.username }}</td>
+                                <td>€{{ product.price }}</td>
+                                <td><span class="badge bg-success">{{ product.units_sold|floatformat:0 }}</span></td>
+                                <td><strong class="text-success">€{{ product.revenue|floatformat:2 }}</strong></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center">No products sold yet.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Productos con Más Stock -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3" style="color: #2d4a3e; border-bottom: 2px solid #2d4a3e; padding-bottom: 10px;">
+                📦 Products with Most Stock
+            </h5>
+            {% if products_most_stock %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead style="background-color: #2d4a3e; color: white;">
+                            <tr>
+                                <th>Product</th>
+                                <th>Seller</th>
+                                <th>Price</th>
+                                <th>Available Stock</th>
+                                <th>Stock Value</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in products_most_stock %}
+                            <tr>
+                                <td><strong>{{ product.name }}</strong></td>
+                                <td class="text-muted">{{ product.created_by.username }}</td>
+                                <td>€{{ product.price }}</td>
+                                <td><span class="badge bg-info">{{ product.stock }} units</span></td>
+                                <td>€{{ product.stock|mul:product.price|floatformat:2 }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center">No products with stock available.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Productos con Bajo Stock -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3" style="color: #2d4a3e; border-bottom: 2px solid #2d4a3e; padding-bottom: 10px;">
+                ⚠️ Low Stock Alerts (&lt;20%)
+            </h5>
+            {% if low_stock_products %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead style="background-color: #2d4a3e; color: white;">
+                            <tr>
+                                <th>Product</th>
+                                <th>Seller</th>
+                                <th>Initial Stock</th>
+                                <th>Current Stock</th>
+                                <th>% Remaining</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in low_stock_products %}
+                            <tr class="table-warning">
+                                <td><strong>{{ product.name }}</strong></td>
+                                <td class="text-muted">{{ product.created_by.username }}</td>
+                                <td>{{ product.initial_stock }}</td>
+                                <td><span class="badge bg-warning text-dark">{{ product.stock }} units</span></td>
+                                <td><span class="badge bg-warning text-dark">{{ product.stock_percentage|floatformat:1 }}%</span></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-success text-center">✅ No products with low stock.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Productos Agotados -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3" style="color: #2d4a3e; border-bottom: 2px solid #2d4a3e; padding-bottom: 10px;">
+                🚫 Out of Stock Products
+            </h5>
+            {% if out_of_stock %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead style="background-color: #2d4a3e; color: white;">
+                            <tr>
+                                <th>Product</th>
+                                <th>Seller</th>
+                                <th>Price</th>
+                                <th>Units Sold</th>
+                                <th>Revenue Generated</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in out_of_stock %}
+                            <tr class="table-danger">
+                                <td><strong>{{ product.name }}</strong></td>
+                                <td class="text-muted">{{ product.created_by.username }}</td>
+                                <td>€{{ product.price }}</td>
+                                <td><span class="badge bg-danger">{{ product.initial_stock }} units</span></td>
+                                <td><strong class="text-success">€{{ product.initial_stock|mul:product.price|floatformat:2 }}</strong></td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-success text-center">✅ No out of stock products.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Distribución de Precios -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3" style="color: #2d4a3e; border-bottom: 2px solid #2d4a3e; padding-bottom: 10px;">
+                💰 Price Distribution
+            </h5>
+            <div class="row">
+                {% for range in price_ranges %}
+                <div class="col-md-4 col-sm-6 mb-3">
+                    <div class="card" style="background-color: #f8f9fa;">
+                        <div class="card-body text-center">
+                            <h6 class="text-muted">{{ range.label }}</h6>
+                            <h3 style="color: #2d4a3e;">{{ range.count }}</h3>
+                            <small class="text-muted">products</small>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Productos Más Caros -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <h5 class="card-title mb-3" style="color: #2d4a3e; border-bottom: 2px solid #2d4a3e; padding-bottom: 10px;">
+                💎 Most Expensive Products
+            </h5>
+            {% if most_expensive %}
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead style="background-color: #2d4a3e; color: white;">
+                            <tr>
+                                <th>Product</th>
+                                <th>Seller</th>
+                                <th>Price</th>
+                                <th>Stock</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for product in most_expensive %}
+                            <tr>
+                                <td><strong>{{ product.name }}</strong></td>
+                                <td class="text-muted">{{ product.created_by.username }}</td>
+                                <td><strong style="color: #2d4a3e; font-size: 1.1em;">€{{ product.price }}</strong></td>
+                                <td>{{ product.stock }} units</td>
+                                <td>
+                                    {% if product.stock > 0 %}
+                                        <span class="badge bg-success">Available</span>
+                                    {% else %}
+                                        <span class="badge bg-danger">Out of Stock</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            {% else %}
+                <div class="alert alert-info text-center">No products available.</div>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <p>Contact support if you have any problems: <a href="mailto:support@goodbite.com">support@goodbite.com</a></p>
+    </div>
+</div>
+{% endblock %}
