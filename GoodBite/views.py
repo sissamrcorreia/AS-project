@@ -1,18 +1,18 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import logout, authenticate, login, get_user_model
+
+from GoodBite.signals import User
 from .forms import CustomUserCreationForm, ProductForm, UserUpdateForm, ProfileUpdateForm
 from .models import Product, Profile
 from django.contrib import messages
-from django.db.models import Q
+from django.db.models import Sum, Count, F, Q, DecimalField, ExpressionWrapper
+from django.db.models.functions import TruncMonth, TruncWeek
 
 # Create your views here.
 def home(request):
     return render(request, 'main/home.html')
-
-@login_required
-def features(request):
-    return render(request, 'main/features.html')
 
 @login_required
 def products(request):
@@ -159,3 +159,111 @@ def buy_product(request, product_id):
 
     messages.success(request, f"You successfully bought {product.name}! Stock left: {product.stock}")
     return redirect('product_list')
+
+
+@staff_member_required
+def statistics(request):
+    # Top vendedores
+    top_sellers = User.objects.annotate(
+        total_products=Count('products'),
+        total_units_sold=Sum(F('products__initial_stock') - F('products__stock')),
+        total_revenue=Sum(
+            ExpressionWrapper(
+                (F('products__initial_stock') - F('products__stock')) * F('products__price'),
+                output_field=DecimalField()
+            )
+        )
+    ).filter(
+        total_units_sold__gt=0
+    ).order_by('-total_revenue')[:10]
+
+    # Productos más vendidos
+    top_products = Product.objects.annotate(
+        units_sold=ExpressionWrapper(
+            F('initial_stock') - F('stock'),
+            output_field=DecimalField()
+        ),
+        revenue=ExpressionWrapper(
+            (F('initial_stock') - F('stock')) * F('price'),
+            output_field=DecimalField()
+        )
+    ).filter(units_sold__gt=0).order_by('-units_sold')[:10]
+
+    # Productos con más stock
+    products_most_stock = Product.objects.filter(stock__gt=0).order_by('-stock')[:10]
+
+    # Productos con bajo stock (menos del 20% del inicial)
+    low_stock_products = Product.objects.annotate(
+        stock_percentage=ExpressionWrapper(
+            F('stock') * 100.0 / F('initial_stock'),
+            output_field=DecimalField()
+        )
+    ).filter(
+        initial_stock__gt=0,
+        stock_percentage__lt=20,
+        stock__gt=0
+    ).order_by('stock_percentage')[:10]
+
+    # Productos agotados
+    out_of_stock = Product.objects.filter(stock=0, initial_stock__gt=0)[:10]
+
+    # Estadísticas generales
+    total_products = Product.objects.count()
+    total_active_products = Product.objects.filter(stock__gt=0).count()
+    
+    total_units_sold_all = Product.objects.aggregate(
+        total=Sum(F('initial_stock') - F('stock'))
+    )['total'] or 0
+
+    total_revenue_all = Product.objects.aggregate(
+        total=Sum(
+            ExpressionWrapper(
+                (F('initial_stock') - F('stock')) * F('price'),
+                output_field=DecimalField()
+            )
+        )
+    )['total'] or 0
+
+    total_stock_value = Product.objects.aggregate(
+        total=Sum(
+            ExpressionWrapper(
+                F('stock') * F('price'),
+                output_field=DecimalField()
+            )
+        )
+    )['total'] or 0
+
+    # Productos por rango de precio
+    price_ranges = [
+        {'label': '0-10€', 'count': Product.objects.filter(price__lt=10).count()},
+        {'label': '10-50€', 'count': Product.objects.filter(price__gte=10, price__lt=50).count()},
+        {'label': '50-100€', 'count': Product.objects.filter(price__gte=50, price__lt=100).count()},
+        {'label': '100-500€', 'count': Product.objects.filter(price__gte=100, price__lt=500).count()},
+        {'label': '500€+', 'count': Product.objects.filter(price__gte=500).count()},
+    ]
+
+    # Productos más caros
+    most_expensive = Product.objects.order_by('-price')[:5]
+
+    # Promedio de precio
+    avg_price = Product.objects.aggregate(avg=Sum('price'))['avg'] or 0
+    if total_products > 0:
+        avg_price = avg_price / total_products
+
+    context = {
+        'top_sellers': top_sellers,
+        'top_products': top_products,
+        'products_most_stock': products_most_stock,
+        'low_stock_products': low_stock_products,
+        'out_of_stock': out_of_stock,
+        'total_products': total_products,
+        'total_active_products': total_active_products,
+        'total_units_sold': total_units_sold_all,
+        'total_revenue': total_revenue_all,
+        'total_stock_value': total_stock_value,
+        'price_ranges': price_ranges,
+        'most_expensive': most_expensive,
+        'avg_price': avg_price,
+    }
+
+    return render(request, 'main/statistics.html', context)
