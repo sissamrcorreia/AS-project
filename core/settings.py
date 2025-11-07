@@ -44,7 +44,16 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'GoodBite',
+    #mfa
+    "django.contrib.sites",
+    "allauth",
+    "allauth.account",
+    "allauth.mfa",
+    "django.contrib.humanize",
+
 ]
+
+SITE_ID = 1
 
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
@@ -57,6 +66,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    "allauth.account.middleware.AccountMiddleware"
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -75,6 +85,7 @@ TEMPLATES = [
         },
     },
 ]
+
 
 MESSAGE_TAGS = {
     messages.ERROR: 'danger',
@@ -120,6 +131,10 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',  # MFA: admin y username login
+    'allauth.account.auth_backends.AuthenticationBackend',  # allauth
+]
 
 # Internationalization
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
@@ -161,3 +176,13 @@ MEDIA_ROOT = BASE_DIR / 'media'
 # Limit uploads to prevent denial-of-service attacks
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB global limit
 FILE_UPLOAD_PERMISSIONS = 0o644  # Restrict file read permissions
+
+#--- ALLAUTH CONFIG ---
+ACCOUNT_AUTHENTICATION_METHOD = "username"
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = "none"
+
+# MFA (TOTP + recovery codes)
+MFA_SUPPORTED_TYPES = ["recovery_codes", "totp"]
+MFA_ALLOW_UNVERIFIED_EMAIL = True  # en desarrollo
+MFA_ADAPTER = "allauth.mfa.adapter.DefaultMFAAdapter"
