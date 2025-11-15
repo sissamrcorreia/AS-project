@@ -57,6 +57,28 @@
             background-color: #3b5a35;
             border-color: #3b5a35;
         }
+
+        /* --- MFA buttons (activate / deactivate / recovery) --- */
+        /* Aplicar el estilo a los enlaces de MFA por URL */
+        a[href$="/accounts/2fa/totp/activate/"],
+        a[href$="/accounts/2fa/totp/deactivate/"],
+        a[href$="/accounts/2fa/recovery-codes/generate/"] {
+            display: inline-block;
+            padding: 0.4rem 1.5rem;
+            background-color: #4a7043;
+            color: #ffffff !important;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        a[href$="/accounts/2fa/totp/activate/"]:hover,
+        a[href$="/accounts/2fa/totp/deactivate/"]:hover,
+        a[href$="/accounts/2fa/recovery-codes/generate/"]:hover {
+            background-color: #3b5a35;
+            color: #ffffff !important;
+        }
+
     </style>
 </head>
 <body>
@@ -92,10 +114,10 @@
                             </li>
                         {% else %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'register' %}">Register</a>
+                                <a class="nav-link" href="{% url 'account_signup' %}">Register</a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'login' %}">Login</a>
+                                <a class="nav-link" href="{% url 'account_login' %}">Login</a>
                             </li>
                         {% endif %}
                     </ul>

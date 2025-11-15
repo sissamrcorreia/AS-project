@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags i18n %}
+
+{% block content %}
+
+<h3>Multi-Factor Authentication</h3>
+<br>
+
+<form method="post">
+    {% csrf_token %}
+
+    <div class="card mx-auto" style="width: 30rem;">
+        <div class="card-body">
+            <h5 class="card-title">{% trans "Enter authentication code" %}</h5>
+
+            {{ form|crispy }}
+
+            <button class="btn btn-sm btn-primary float-end" type="submit">
+                {% trans "Verify" %}
+            </button>
+        </div>
+    </div>
+</form>
+
+{% endblock %}

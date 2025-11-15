@@ -1,7 +1,3 @@
-{% extends 'base.html' %}
-
-{% block content %}
-
 {% load crispy_forms_tags %}
 
 <h3>Register Page</h3>
@@ -16,10 +12,10 @@
             <h5 class="card-title">Enter credentials</h5>
             {{ form|crispy }}
             <a href="{% url 'home' %}" class="card-link">Home</a>
-            <a href="{% url 'login' %}" class="card-link">Login</a>
+            <a href="{% url 'account_login' %}" class="card-link">Login</a>
 
             <button class="btn btn-sm btn-primary float-end" type="submit">Register</button>
         </div>
     </div>
 
-{% endblock %}
+</form>
