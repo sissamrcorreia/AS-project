@@ -177,7 +177,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 DATA_UPLOAD_MAX_MEMORY_SIZE = 10 * 1024 * 1024  # 10 MB global limit
 FILE_UPLOAD_PERMISSIONS = 0o644  # Restrict file read permissions
 
-#--- ALLAUTH CONFIG ---
+#-------------- ALLAUTH CONFIG ------------------------------
 ACCOUNT_AUTHENTICATION_METHOD = "username"
 ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = "none"
@@ -186,3 +186,9 @@ ACCOUNT_EMAIL_VERIFICATION = "none"
 MFA_SUPPORTED_TYPES = ["recovery_codes", "totp"]
 MFA_ALLOW_UNVERIFIED_EMAIL = True  # en desarrollo
 MFA_ADAPTER = "allauth.mfa.adapter.DefaultMFAAdapter"
+# Después de un signup, ir a la pantalla de 2FA
+ACCOUNT_SIGNUP_REDIRECT_URL = "/accounts/2fa/"
+ACCOUNT_ADAPTER = "GoodBite.adapters.GoodBiteAccountAdapter"
+
+# En desarrollo: mostrar emails en la consola
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
