@@ -55,7 +55,6 @@ This command will create the base demo users:
 | Seller | `seller_demo`  | `seller123` |
 
 > The seed script is located at `GoodBite/management/commands/seed.py`.  
-> Modify it later to include demo products, orders, or other data as the project evolves.
 
 ---
 
