@@ -70,7 +70,7 @@
     </style>
 
     {% if request.user.is_authenticated %}
-        <h2>{{user.username | upper}} is logged in!</h2>
+        <h2>{{ user.username|slice:"0:30"|upper }} is logged in!</h2>
     {% endif %}
 
     <!-- Hero Section -->
