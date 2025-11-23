@@ -1,6 +1,8 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+
 from .models import Product, Profile
 import datetime
 
@@ -13,6 +15,17 @@ class UserUpdateForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ['first_name', 'last_name', 'email']
+
+    def clean_email(self):
+        email = self.cleaned_data.get("email", "")
+        try:
+            local_part, domain = email.rsplit("@", 1)
+        except ValueError:
+            raise ValidationError("Enter a valid email address.")
+
+        if "." not in domain:
+            raise ValidationError("Enter a valid email address.")
+        return email
 
 class ProductForm(forms.ModelForm):
     class Meta:

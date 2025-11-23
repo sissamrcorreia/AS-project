@@ -38,25 +38,29 @@ def profile(request, username):
         form_profile = ProfileUpdateForm(request.POST, request.FILES, instance=profile_obj)
 
         if form.is_valid() and form_profile.is_valid():
-            try:
                 form.save()
                 form_profile.save()
                 messages.success(request, "Data saved successfully")
                 return redirect('profile', username=user.username)
-            except Exception:
-                messages.error(request, "Oh no, an unexpected error happened. Try again later.")
-                edit_mode = True
         else:
-            birthdate_errors = form_profile.errors.get('birthdate')
-            phone_number_errors = form_profile.errors.get('phone_number')
-            if birthdate_errors:
-                messages.error(request, birthdate_errors[0])
-                edit_mode = True
-            elif phone_number_errors:
-                messages.error(request, f"Phone Number Error: {phone_number_errors[0]}")
+            if form.errors:
+                for field, errors in form.errors.items():
+                    for error in errors:
+                        messages.error(request, error)
                 edit_mode = True
             else:
-                messages.error(request, "Oh no, an unexpected error happened. Try again later.")
+                birthdate_errors = form_profile.errors.get('birthdate')
+                phone_number_errors = form_profile.errors.get('phone_number')
+
+                if birthdate_errors:
+                    messages.error(request, birthdate_errors[0])
+
+                if phone_number_errors:
+                    messages.error(request, f"Phone Number Error: {phone_number_errors[0]}")
+
+                if not birthdate_errors and not phone_number_errors:
+                    messages.error(request, "Oh no, an unexpected error happened. Try again later.")
+
                 edit_mode = True
     else:
         form = UserUpdateForm(instance=user)
