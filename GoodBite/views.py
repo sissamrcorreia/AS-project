@@ -1,7 +1,10 @@
-from django.shortcuts import render, redirect, get_object_or_404
-from django.contrib.auth.decorators import login_required, permission_required
+from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
-from django.contrib.auth import logout, authenticate, login, get_user_model
+from django.contrib.auth import authenticate, get_user_model, login, logout
+from django.contrib.auth.decorators import login_required, permission_required
+from django.db.models import Count, DecimalField, ExpressionWrapper, F, Q, Sum
+from django.db.models.functions import TruncMonth, TruncWeek
+from django.shortcuts import get_object_or_404, redirect, render
 
 from GoodBite.signals import User
 from .forms import CustomUserCreationForm, ProductForm, UserUpdateForm, ProfileUpdateForm
@@ -45,8 +48,12 @@ def profile(request, username):
                 edit_mode = True
         else:
             birthdate_errors = form_profile.errors.get('birthdate')
+            phone_number_errors = form_profile.errors.get('phone_number')
             if birthdate_errors:
                 messages.error(request, birthdate_errors[0])
+                edit_mode = True
+            elif phone_number_errors:
+                messages.error(request, f"Phone Number Error: {phone_number_errors[0]}")
                 edit_mode = True
             else:
                 messages.error(request, "Oh no, an unexpected error happened. Try again later.")

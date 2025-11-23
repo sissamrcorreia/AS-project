@@ -2,6 +2,7 @@ from django.db import models
 from django.contrib.auth.models import User
 from django.conf import settings
 from .validators import ValidateImageFile
+from phonenumber_field.modelfields import PhoneNumberField
 import os
 import uuid
 
@@ -52,7 +53,16 @@ class Profile(models.Model):
         on_delete=models.CASCADE,
         related_name="profile"
     )
-    phone_number = models.CharField(max_length=9, blank=True)
+
+    phone_number = PhoneNumberField(
+        region="ES",           # ← Spain
+        blank=True,            # allows empty
+        null=True,             # needed for blank=True in most cases
+        unique=True,
+        max_length=20,
+        help_text="Ejemplo: +34666123456"
+    )
+    
     birthdate = models.DateField(null=True, blank=True)
     avatar = models.ImageField(upload_to=profile_image_path, blank=True, null=True, validators=[ValidateImageFile()])
 

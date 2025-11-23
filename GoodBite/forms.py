@@ -27,9 +27,6 @@ class ProfileUpdateForm(forms.ModelForm):
         model = Profile
         fields = ['phone_number', 'birthdate', 'avatar']
         widgets = {
-            'phone_number': forms.TextInput(attrs={
-                'placeholder': 'add a phone number'
-            }),
             'birthdate': forms.DateInput(attrs={
                 'type': 'date',
                 'placeholder': 'YYYY-MM-DD',
