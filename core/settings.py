@@ -44,7 +44,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'GoodBite',
-    #mfa
     "django.contrib.sites",
     "allauth",
     "allauth.account",
@@ -66,7 +65,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    "allauth.account.middleware.AccountMiddleware"
+    "allauth.account.middleware.AccountMiddleware",
 ]
 
 ROOT_URLCONF = 'core.urls'
@@ -81,6 +80,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'GoodBite.context_processors.mfa_status',
             ],
         },
     },
@@ -178,14 +178,20 @@ FILE_UPLOAD_PERMISSIONS = 0o644  # Restrict file read permissions
 ACCOUNT_AUTHENTICATION_METHOD = "username"
 ACCOUNT_EMAIL_REQUIRED = False
 ACCOUNT_EMAIL_VERIFICATION = "none"
+ACCOUNT_ADAPTER = "GoodBite.adapters.GoodBiteAccountAdapter"
+
+ACCOUNT_REAUTHENTICATION_REQUIRED = False
+ACCOUNT_REAUTHENTICATION_TIMEOUT = 1800
+#MFA_ACTIVATE_TOTP_REDIRECT_URL = "home"
 
 # MFA (TOTP + recovery codes)
 MFA_SUPPORTED_TYPES = ["recovery_codes", "totp"]
 MFA_ALLOW_UNVERIFIED_EMAIL = True  # en desarrollo
 MFA_ADAPTER = "allauth.mfa.adapter.DefaultMFAAdapter"
-# Después de un signup, ir a la pantalla de 2FA
-ACCOUNT_SIGNUP_REDIRECT_URL = "/accounts/2fa/"
-ACCOUNT_ADAPTER = "GoodBite.adapters.GoodBiteAccountAdapter"
 
 # En desarrollo: mostrar emails en la consola
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+
+ACCOUNT_FORMS = {
+    "signup": "GoodBite.forms.CustomSignupForm",
+}

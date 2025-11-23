@@ -1,17 +1,13 @@
-from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
-from django.db.models import Count, DecimalField, ExpressionWrapper, F, Q, Sum
-from django.db.models.functions import TruncMonth, TruncWeek
 from django.shortcuts import get_object_or_404, redirect, render
 
 from GoodBite.signals import User
-from .forms import CustomUserCreationForm, ProductForm, UserUpdateForm, ProfileUpdateForm
+from .forms import ProductForm, UserUpdateForm, ProfileUpdateForm
 from .models import Product, Profile
 from django.contrib import messages
 from django.db.models import Sum, Count, F, Q, DecimalField, ExpressionWrapper
-from django.db.models.functions import TruncMonth, TruncWeek
 
 # Create your views here.
 def home(request):
@@ -78,24 +74,8 @@ def exit(request):
     return redirect('home')
 
 def register(request):
-    data = {
-        'form': CustomUserCreationForm()
-    }
+    return redirect('account_signup')
 
-    if request.method == 'POST':
-        user_creation_form = CustomUserCreationForm(data=request.POST)
-        if user_creation_form.is_valid():
-            user_creation_form.save()
-
-            user = authenticate(username=user_creation_form.cleaned_data['username'], password=user_creation_form.cleaned_data['password1'])
-            login(request, user)
-
-            return redirect('home')
-        data['form'] = user_creation_form
-
-    return render(request, 'registration/register.html', data)
-
-# New views for RBAC
 @permission_required('GoodBite.can_create_product', raise_exception=True)
 @login_required
 def create_product(request):

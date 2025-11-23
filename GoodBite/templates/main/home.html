@@ -71,6 +71,15 @@
 
     {% if request.user.is_authenticated %}
         <h2>{{ user.username|slice:"0:30"|upper }} is logged in!</h2>
+
+        {% if not is_mfa_enabled %}
+            <div class="alert alert-info alert-dismissible fade show mx-auto" role="alert" style="max-width: 800px; margin-top: 1rem;">
+                <strong>Secure your account!</strong>
+                Enable two-factor authentication for extra protection.
+                <a href="{% url 'mfa_index' %}" class="btn btn-sm btn-primary ms-2">Enable 2FA</a>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endif %}
     {% endif %}
 
     <!-- Hero Section -->
@@ -117,7 +126,7 @@
             <div class="container">
                 <h2>Join the Food Rescue Revolution</h2>
                 <p>Sign up today to start saving delicious meals, supporting local businesses, and making a difference for the planet.</p>
-                <a href="{% url 'register' %}" class="btn btn-primary btn-lg">Get Started</a>
+                <a href="{% url 'account_signup' %}" class="btn btn-primary btn-lg">Get Started</a>
             </div>
         </section>
     {% endif %}
