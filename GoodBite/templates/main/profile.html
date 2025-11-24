@@ -75,11 +75,14 @@
       <li><strong>Date joined:</strong> {{ user_obj.date_joined }}</li>
     </ul>
     {% if request.user == user_obj or request.user.is_staff %}
-      <div class="text-end mt-3">
+      <div class="d-flex justify-content-between align-items-center mt-3">
         <a href="{% url 'profile' user_obj.username %}?edit=1"
-           class="btn"
-           style="background-color:#2d4a3e; color:white; text-transform:uppercase;">
+           class="btn btn-outline-secondary text-uppercase">
           Edit
+        </a>
+        <a href="{% url 'profile_delete' user_obj.username %}"
+           class="btn btn-outline-danger text-uppercase">
+           Delete Profile
         </a>
       </div>
     {% endif %}

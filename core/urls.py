@@ -18,12 +18,13 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from GoodBite.views import UserDeleteView
 
 urlpatterns = [
     path('', include('GoodBite.urls')),
     path('admin/', admin.site.urls),
-    #path('accounts/', include('django.contrib.auth.urls')), #Login standard
     path('accounts/', include('allauth.urls')), #MFA
+    path('profile/<str:username>/delete/', UserDeleteView.as_view(), name='profile_delete'),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

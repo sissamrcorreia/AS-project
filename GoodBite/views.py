@@ -8,8 +8,11 @@ from .forms import ProductForm, UserUpdateForm, ProfileUpdateForm
 from .models import Product, Profile
 from django.contrib import messages
 from django.db.models import Sum, Count, F, Q, DecimalField, ExpressionWrapper
+from django.views.generic import DeleteView
+from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
+from django.core.exceptions import PermissionDenied
 
-# Create your views here.
 def home(request):
     return render(request, 'main/home.html')
 
@@ -154,7 +157,7 @@ def buy_product(request, product_id):
 
 @staff_member_required
 def statistics(request):
-    # Top vendedores
+    # Top sellers
     top_sellers = User.objects.annotate(
         total_products=Count('products'),
         total_units_sold=Sum(F('products__initial_stock') - F('products__stock')),
@@ -168,7 +171,7 @@ def statistics(request):
         total_units_sold__gt=0
     ).order_by('-total_revenue')[:10]
 
-    # Productos más vendidos
+    # Top products
     top_products = Product.objects.annotate(
         units_sold=ExpressionWrapper(
             F('initial_stock') - F('stock'),
@@ -180,10 +183,10 @@ def statistics(request):
         )
     ).filter(units_sold__gt=0).order_by('-units_sold')[:10]
 
-    # Productos con más stock
+    # Products with most stock
     products_most_stock = Product.objects.filter(stock__gt=0).order_by('-stock')[:10]
 
-    # Productos con bajo stock (menos del 20% del inicial)
+    # Products with low stock (less than 20% of initial)
     low_stock_products = Product.objects.annotate(
         stock_percentage=ExpressionWrapper(
             F('stock') * 100.0 / F('initial_stock'),
@@ -195,10 +198,10 @@ def statistics(request):
         stock__gt=0
     ).order_by('stock_percentage')[:10]
 
-    # Productos agotados
+    # Out of stock products
     out_of_stock = Product.objects.filter(stock=0, initial_stock__gt=0)[:10]
 
-    # Estadísticas generales
+    # General statistics
     total_products = Product.objects.count()
     total_active_products = Product.objects.filter(stock__gt=0).count()
     
@@ -224,7 +227,7 @@ def statistics(request):
         )
     )['total'] or 0
 
-    # Productos por rango de precio
+    # Products by price range
     price_ranges = [
         {'label': '0-10€', 'count': Product.objects.filter(price__lt=10).count()},
         {'label': '10-50€', 'count': Product.objects.filter(price__gte=10, price__lt=50).count()},
@@ -233,10 +236,10 @@ def statistics(request):
         {'label': '500€+', 'count': Product.objects.filter(price__gte=500).count()},
     ]
 
-    # Productos más caros
+    # Most expensive products
     most_expensive = Product.objects.order_by('-price')[:5]
 
-    # Promedio de precio
+    # Average price
     avg_price = Product.objects.aggregate(avg=Sum('price'))['avg'] or 0
     if total_products > 0:
         avg_price = avg_price / total_products
@@ -258,3 +261,33 @@ def statistics(request):
     }
 
     return render(request, 'main/statistics.html', context)
+
+
+class UserDeleteView(DeleteView):
+    """
+    Deletes the current user's account and logs them out.
+    """
+    model = get_user_model()
+    success_url = reverse_lazy('home')
+    template_name = 'main/confirm_delete_profile.html'
+    
+    # 1. Ensure only the currently logged-in user can delete their profile
+    def get_object(self, queryset=None):
+        user_obj = get_object_or_404(self.model, username=self.kwargs['username'])
+        
+        # Security check: User can only delete their own profile, unless they are admin
+        if self.request.user != user_obj and not self.request.user.is_staff:
+            raise PermissionDenied("You do not have permission to delete this profile.")
+            
+        return user_obj
+
+    # 2. Add an extra step to log the user out after deletion
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        logout(self.request)
+        return response
+
+    # 3. Apply the login_required decorator
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super().dispatch(*args, **kwargs)
