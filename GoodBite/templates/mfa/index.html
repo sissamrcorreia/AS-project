@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block title %}Two-Factor Authentication{% endblock %}
+
+{% block content %}
+    <h1>Two-Factor Authentication</h1>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+
+            <!-- Authenticator App -->
+            <div class="container mb-4 p-4">
+                <h2 class="mb-3 text-center">Authenticator App</h2>
+
+                {% if is_mfa_enabled %}
+                    <p class="text-center">Your authenticator app is active.</p>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'mfa_deactivate_totp' %}" class="btn btn-primary" style="background-color:#8f3a3a;border-color:#8f3a3a;">
+                            Deactivate
+                        </a>
+                    </div>
+                {% else %}
+                    <p class="text-center">An authenticator app is not active.</p>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'mfa_activate_totp' %}" class="btn btn-primary">
+                            Activate
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <div class="mt-4 text-center">
+        <p>Contact support if you have any problems: <a href="mailto:support@goodbite.com">support@goodbite.com</a></p>
+    </div>
+{% endblock %}

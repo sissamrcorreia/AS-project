@@ -109,11 +109,15 @@
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'exit' %}">Logout</a>
                             </li>
-                            {% if not is_mfa_enabled %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'mfa_index' %}">Enable 2FA</a>
+                                <a class="nav-link" href="{% url 'mfa_index' %}">
+                                    {% if is_mfa_enabled %}
+                                        2FA settings
+                                    {% else %}
+                                        Enable 2FA
+                                    {% endif %}
+                                </a>
                             </li>
-                            {% endif %}
                             <li class="nav-item">
                                 <a class="nav-link" href="{% url 'profile' request.user.username %}">Profile</a>
                             </li>

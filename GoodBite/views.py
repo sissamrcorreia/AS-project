@@ -2,6 +2,8 @@ from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import authenticate, get_user_model, login, logout
 from django.contrib.auth.decorators import login_required, permission_required
 from django.shortcuts import get_object_or_404, redirect, render
+from allauth.mfa.adapter import get_adapter as get_mfa_adapter
+from allauth.mfa.models import Authenticator
 
 from GoodBite.signals import User
 from .forms import ProductForm, UserUpdateForm, ProfileUpdateForm
@@ -261,7 +263,6 @@ def statistics(request):
     }
 
     return render(request, 'main/statistics.html', context)
-
 
 class UserDeleteView(DeleteView):
     """

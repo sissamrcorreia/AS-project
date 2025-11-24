@@ -182,15 +182,11 @@ ACCOUNT_ADAPTER = "GoodBite.adapters.GoodBiteAccountAdapter"
 
 ACCOUNT_REAUTHENTICATION_REQUIRED = False
 ACCOUNT_REAUTHENTICATION_TIMEOUT = 1800
-#MFA_ACTIVATE_TOTP_REDIRECT_URL = "home"
 
-# MFA (TOTP + recovery codes)
-MFA_SUPPORTED_TYPES = ["recovery_codes", "totp"]
-MFA_ALLOW_UNVERIFIED_EMAIL = True  # en desarrollo
+# MFA
+MFA_SUPPORTED_TYPES = ["totp"]
+MFA_ALLOW_UNVERIFIED_EMAIL = False
 MFA_ADAPTER = "allauth.mfa.adapter.DefaultMFAAdapter"
-
-# En desarrollo: mostrar emails en la consola
-EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 ACCOUNT_FORMS = {
     "signup": "GoodBite.forms.CustomSignupForm",
