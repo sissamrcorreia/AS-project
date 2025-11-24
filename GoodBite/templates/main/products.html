@@ -86,7 +86,9 @@
                                         <!-- BUY NOW only for Customers -->
                                         {% if user.is_authenticated and user != product.created_by and user.groups.all.0.name == 'Customer' %}
                                             {% if product.stock > 0 %}
-                                                <a href="{% url 'buy_product' product.id %}" class="btn btn-primary btn-sm">
+                                                <a href="{% url 'buy_product' product.id %}" 
+                                                   class="btn btn-sm text-uppercase" 
+                                                   style="background-color:#2d4a3e; color:white;">
                                                     Buy Now
                                                 </a>
                                             {% endif %}
