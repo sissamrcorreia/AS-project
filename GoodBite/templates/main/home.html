@@ -67,17 +67,36 @@
             max-width: 700px;
             margin: 0 auto 2rem;
         }
+        .security-alert {
+            background-color: #e6f7ed;
+            border: 1px solid #b3e6c8;
+            color: #1f6e47;
+        }
+        .security-alert strong {
+            color: #2d4a3e;
+        }
     </style>
 
     {% if request.user.is_authenticated %}
         <h2>{{ user.username|slice:"0:30"|upper }} is logged in!</h2>
 
         {% if not is_mfa_enabled %}
-            <div class="alert alert-info alert-dismissible fade show mx-auto" role="alert" style="max-width: 800px; margin-top: 1rem;">
-                <strong>Secure your account!</strong>
-                Enable two-factor authentication for extra protection.
-                <a href="{% url 'mfa_index' %}" class="btn btn-sm btn-primary ms-2">Enable 2FA</a>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            <div class="alert security-alert alert-dismissible fade show mx-auto" role="alert" style="max-width: 800px; margin-top: 1rem;">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <i class="fas fa-shield-alt me-2" style="font-size: 1.25rem;"></i>
+                        <p class="mb-0">
+                            <strong>Secure your account!</strong> Enable two-factor authentication for extra protection.
+                        </p>
+                    </div>
+                    <div class="d-flex align-items-center">
+                        <a href="{% url 'mfa_index' %}" class="btn btn-sm text-uppercase"
+                           style="background-color:#2d4a3e; color:white;">
+                            Enable 2FA
+                        </a>
+                        <button type="button" class="btn-close ms-2" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                </div>
             </div>
         {% endif %}
     {% endif %}
