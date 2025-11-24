@@ -5,7 +5,7 @@ from django.core.files import File
 from django.conf import settings
 import os
 
-from GoodBite.models import Product
+from GoodBite.models import Product, Profile
 
 User = get_user_model()
 
@@ -16,6 +16,14 @@ class Command(BaseCommand):
         # === 1 Create roles ===
         customer_group, _ = Group.objects.get_or_create(name="Customer")
         seller_group, _ = Group.objects.get_or_create(name="Seller")
+
+        birthdates = {
+            "sissa": "1997-05-12",
+            "uri": "1996-11-03",
+            "anna": "1998-02-21",
+            "johanna": "1999-08-15",
+            "irene": "1995-12-04",
+        }
 
         users = [
             {"username": "admin", "first_name": "Admin", "last_name": "", "email": "admin@admin.com", "password": "admin", "is_superuser": True},
@@ -48,9 +56,15 @@ class Command(BaseCommand):
                     password=user_data["password"]
                 )
                 user_cust.groups.add(customer_group)
-                self.stdout.write(self.style.SUCCESS(f"✔ {username_cust} (Customer) created"))
+
+                Profile.objects.create(
+                    user=user_cust,
+                    birthdate=birthdates.get(base_username)
+                )
+
+                self.stdout.write(self.style.SUCCESS(f"{username_cust} (Customer) created"))
             else:
-                self.stdout.write(f"⚠ {username_cust} already exists")
+                self.stdout.write(f"{username_cust} already exists")
 
             # Seller
             username_sell = f"{base_username}Seller"
@@ -64,40 +78,46 @@ class Command(BaseCommand):
                 )
                 user_sell.groups.remove(customer_group)
                 user_sell.groups.add(seller_group)
-                self.stdout.write(self.style.SUCCESS(f"✔ {username_sell} (Seller) created"))
-            else:
-                self.stdout.write(f"⚠ {username_sell} already exists")
 
-        self.stdout.write(self.style.SUCCESS("🎉 All users created successfully!"))
+                Profile.objects.create(
+                    user=user_sell,
+                    birthdate=birthdates.get(base_username)
+                )
+
+                self.stdout.write(self.style.SUCCESS(f"{username_sell} (Seller) created"))
+            else:
+                self.stdout.write(f"{username_sell} already exists")
+
+        self.stdout.write(self.style.SUCCESS("All users created successfully!"))
 
         # === 2 Create demo products with images and STOCK ===
         try:
             uri_seller = User.objects.get(username="uriSeller")
             sissa_seller = User.objects.get(username="sissaSeller")
         except User.DoesNotExist:
-            self.stdout.write(self.style.ERROR("⚠ 'uriSeller' or 'sissaSeller' not found. Products skipped."))
+            self.stdout.write(self.style.ERROR("'uriSeller' or 'sissaSeller' not found. Products skipped."))
             return
 
         products = [
             {
-                "name": "Jamón Ibérico",
-                "description": "Jamón ibérico de bellota, curado artesanalmente con un sabor excepcional.",
+                "name": "Iberian Ham",
+                "description": "Iberian ham from acorn-fed pigs, artisanally cured with an exceptional flavor.",
                 "price": 120.00,
                 "image": "product1.jpg",
                 "created_by": uri_seller,
                 "stock": 5,
             },
             {
-                "name": "Tortilla de Patatas",
-                "description": "Clásica tortilla española jugosa, con huevos camperos y patatas de la huerta.",
+                "name": "Potato Omelette",
+                "description": "Classic juicy Spanish omelette, with free-range eggs and garden potatoes.",
                 "price": 8.50,
                 "image": "product2.jpg",
                 "created_by": uri_seller,
                 "stock": 2,
             },
             {
-                "name": "Pan con Tomate",
-                "description": "Rebanadas de pan crujiente con tomate rallado y aceite de oliva virgen extra.",
+                "name": "Bread with Tomato",
+                "description": "Slices of crispy bread with grated tomato and extra virgin olive oil.",
                 "price": 4.00,
                 "image": "product3.jpg",
                 "created_by": sissa_seller,
