@@ -90,6 +90,11 @@ ps:
 tables:
 	$(MAKE) psql CMD="\\dt"
 
+creating:
+	$(MAKE) migrate
+	$(MAKE) roles
+	$(MAKE) seed
+
 # =========================================================
 # Default target
 # =========================================================
@@ -110,3 +115,4 @@ help:
 	@echo "  clean       - Remove unused Docker resources"
 	@echo "  ps          - Show running containers"
 	@echo "  tables      - List database tables"
+	@echo "  creating	- Setup database with migrations, roles, and seed data"
