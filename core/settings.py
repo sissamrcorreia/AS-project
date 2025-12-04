@@ -155,6 +155,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 STATICFILES_DIRS = [
+    BASE_DIR / "GoodBite" / "static",
     BASE_DIR / 'GoodBite' / 'static_seed_images',
 ]
 
